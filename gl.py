@@ -138,20 +138,44 @@ class Renderer(object):
 
         self.scene = []
 
-        self.pointLight = glm.vec3(-10, 0, -5)
+        self.pointLight = glm.vec3(-4, 0, -1)
 
         self.tiempo = 0
         self.valor = 0
 
+        self.angle = 180
+        self.distanceRadius = 5
+
         # View Matrix
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0) # pitch, yaw, roll
+
+        self.viewMatrix = self.getViewMatrix()
 
         # Projection Matrix
         self.projectionMatrix = glm.perspective(glm.radians(60),            # FOV en radianes
                                                 self.width / self.height,   # Aspect Ratio
                                                 0.1,                        # Near Plane distance
                                                 1000)                       # Far plane distance
+        
+        
+
+    def rotateLeft(self, target, amount):
+        self.angle += amount
+
+        self.camPosition.x = glm.sin(glm.radians(self.angle)) * self.distanceRadius
+        self.camPosition.z = glm.cos(glm.radians(self.angle)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
+    
+    def rotateRight(self, target, amount):
+        self.angle -= amount
+
+        self.camPosition.x = glm.sin(glm.radians(self.angle)) * self.distanceRadius
+        self.camPosition.z = glm.cos(glm.radians(self.angle)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
+    
 
 
     def getViewMatrix(self):
@@ -184,6 +208,9 @@ class Renderer(object):
         else:
             self.active_shader = None
 
+    def update(self):
+        target = glm.vec3(0,0,-5)
+        self.viewMatrix = glm.lookAt(self.camPosition, target, glm.vec3(0,1,0))
 
     def render(self):
         glClearColor(0.2,0.2,0.2,1)
@@ -193,7 +220,7 @@ class Renderer(object):
 
         if self.active_shader:
             glUniformMatrix4fv(glGetUniformLocation(self.active_shader, "viewMatrix"),
-                               1, GL_FALSE, glm.value_ptr(self.getViewMatrix()))
+                               1, GL_FALSE, glm.value_ptr(self.viewMatrix))
 
             glUniformMatrix4fv(glGetUniformLocation(self.active_shader, "projectionMatrix"),
                                1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
