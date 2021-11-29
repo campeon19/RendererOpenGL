@@ -142,18 +142,14 @@ while isRunning:
 
             if mouse_movement[0] != 0:
                 if mouse_movement[0] > 0:
-                    target = rend.scene[0].position
                     rend.rotateRight(3)
                 elif mouse_movement[0] < 0:
-                    target = rend.scene[0].position
                     rend.rotateLeft(3)
 
             if mouse_movement[1] != 0:
                 if mouse_movement[1] > 0:
-                    target = rend.scene[0].position
                     rend.rotateDown(3)
                 elif mouse_movement[1] < 0:
-                    target = rend.scene[0].position
                     rend.rotateUp(3)
                 
 
