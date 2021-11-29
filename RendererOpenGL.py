@@ -1,8 +1,13 @@
+# Christian Daniel Pérez De León
+# Carne: 19710
+# Graficas por Computador
+
 import pygame
 from pygame.locals import *
 import numpy as np
 from gl import Renderer, Model
 import shaders
+
 
 
 width = 960
@@ -11,19 +16,50 @@ height = 540
 deltaTime = 0.0
 
 pygame.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((width,height), pygame.DOUBLEBUF | pygame.OPENGL )
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
-rend.setShaders(shaders.vertex_toonShader, shaders.fragment_toonShader)
+rend.setShaders(shaders.vertex_shader, shaders.fragment_shader)
 
 face = Model('models/model.obj', 'models/model.bmp')
+face2 = Model('models/Mario.obj', 'models/mario_fire.png')
+face3 = Model('models/Luigi.obj', 'models//luigiD.jpg')
+face4 = Model('models/yoshi2.obj', 'models/yoshi color.png')
+face5 = Model('models/Koopa.obj', 'models/Koopa.png')
+face6 = Model('models/extra_life.obj', 'models/Extra_Life_tex.png')
+face7 = Model('models/Suzanne.obj', 'models/white.jpg')
+
 face.position.z = -5
+face2.position.z = -5
+face3.position.z = -5
+face4.position.z = -5
+face5.position.z = -5
+face6.position.z = -5
+face7.position.z = -5
+
+contador = 0
+def contador_fun():
+    global contador
+    contador += 1
+    contador = contador % 7
+    return contador
+
 
 rend.scene.append( face )
+rend.scene.append( face2 )
+rend.scene.append( face3 )
+rend.scene.append( face4 )
+rend.scene.append( face5 )
+rend.scene.append( face6 )
+rend.scene.append( face7 )
 
 
+pygame.mixer.music.load('./SoundTracks/Stellar Wind.mp3')
+pygame.mixer.music.play(-1)
 isRunning = True
+
 while isRunning:
 
 
@@ -31,17 +67,23 @@ while isRunning:
 
     # Traslacion de camara
     if keys[K_d]:
-        rend.camPosition.x += 2 * deltaTime
+        # rend.camPosition.x += 2 * deltaTime
+        rend.rotateLeft(deltaTime * 20)
     if keys[K_a]:
-        rend.camPosition.x -= 2 * deltaTime
+        # rend.camPosition.x -= 2 * deltaTime
+        rend.rotateRight(deltaTime * 20)
     if keys[K_w]:
-        rend.camPosition.z += 2 * deltaTime
+        # rend.camPosition.z += 2 * deltaTime
+        rend.rotateFront(deltaTime * 20)
     if keys[K_s]:
-        rend.camPosition.z -= 2 * deltaTime
+        # rend.camPosition.z -= 2 * deltaTime
+        rend.rotateBack(deltaTime * 20)
     if keys[K_q]:
-        rend.camPosition.y -= 2 * deltaTime
+        # rend.camPosition.y -= 2 * deltaTime
+        rend.rotateUp(deltaTime * 20)
     if keys[K_e]:
-        rend.camPosition.y += 2 * deltaTime
+        # rend.camPosition.y += 2 * deltaTime
+        rend.rotateDown(deltaTime * 20)
     
     if keys[K_LEFT]:
         if rend.valor > 0:
@@ -72,11 +114,22 @@ while isRunning:
                 rend.setShaders(shaders.vertex_Shader4, shaders.fragment_Shader4)
             if ev.key == K_6:
                 rend.setShaders(shaders.vertex_Shader5, shaders.fragment_Shader5)
+            if ev.key == K_7:
+                rend.setShaders(shaders.vertex_Shader6, shaders.fragment_Shader6)
+            if ev.key == K_8:
+                rend.wireframeMode()
+            if ev.key == K_9:
+                rend.filledMode()
+                
+            if ev.key == K_RETURN:
+                contador_fun()
+                rend.currentModelIndex = contador
+                
 
     rend.tiempo += deltaTime
     deltaTime = clock.tick(60) / 1000
 
-    rend.update()
+    # rend.update()
     rend.render()
 
     pygame.display.flip()

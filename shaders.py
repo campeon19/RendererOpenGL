@@ -1,3 +1,7 @@
+# Christian Daniel Pérez De León
+# Carne: 19710
+# Graficas por Computador
+
 # GLSL
 
 # Shader hecho en clase
@@ -320,4 +324,67 @@ void main()
 }
 """
 
-# FBM Shader
+vertex_Shader6 = """
+#version 450
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 texCoords;
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform float tiempo;
+uniform float valor;
+uniform vec3 pointLight;
+out vec3 outColor;
+out vec2 outTexCoords;
+out vec3 outposition;
+out vec3 outnormal;
+out float outIntensity;
+void main()
+{
+    outposition = position;
+    outnormal = normal;
+    vec4 norm = vec4(normal, 0.0);
+    vec4 pos = vec4(position, 1.0);
+    pos = modelMatrix * pos;
+    vec4 light = vec4(pointLight, 1.0);
+    outIntensity = dot(modelMatrix * norm, normalize(light - pos));
+    gl_Position = projectionMatrix * viewMatrix * pos;
+    outColor = vec3(1.0,1.0,1.0);
+    outTexCoords = texCoords;
+}
+"""
+
+
+fragment_Shader6 = """
+#version 450
+layout (location = 0) out vec4 fragColor;
+in vec3 outColor;
+in vec2 outTexCoords;
+in vec3 outposition;
+in vec3 outnormal;
+in float outIntensity;
+uniform sampler2D tex;
+uniform float tiempo;
+
+vec3 color() {
+  
+  vec3 color = vec3(0.0, 0.0, 0.0);
+  
+  if( abs(mod( abs(outposition.x), abs(.2 * sin(tiempo) )   )) < .1){
+    color.x = .2;
+  }
+  
+  
+  if( abs(mod(outposition.y, .2 * sin(tiempo + 1.0))) < .1){
+    color.z = .9;
+  }
+
+  return color;
+}
+
+void main()
+{
+    fragColor = vec4(color(), 1) * outIntensity;
+}
+"""

@@ -1,3 +1,7 @@
+# Christian Daniel Pérez De León
+# Carne: 19710
+# Graficas por Computador
+
 import glm
 from OpenGL.GL import * 
 from OpenGL.GL.shaders import compileProgram, compileShader
@@ -41,25 +45,90 @@ class Model(object):
     def createVertexBuffer(self):
 
         buffer = []
+        vertCount = 0
 
         for face in self.model.faces:
-            for i in range(3):
+            if len(face) == 3:       
+                for i in range(3):
+
+                    # positions
+                    pos = self.model.vertices[face[i][0] - 1]
+                    buffer.append(pos[0])
+                    buffer.append(pos[1])
+                    buffer.append(pos[2])
+
+                    # normals
+                    norm = self.model.normals[face[i][2] - 1]
+                    buffer.append(norm[0])
+                    buffer.append(norm[1])
+                    buffer.append(norm[2])
+
+                    # texCoords
+                    uvs = self.model.texcoords[face[i][1] - 1]
+                    buffer.append(uvs[0])
+                    buffer.append(uvs[1])
+            if len(face) == 4:
+                for i in range(3):
+                    # positions
+                    pos = self.model.vertices[face[i][0] - 1]
+                    buffer.append(pos[0])
+                    buffer.append(pos[1])
+                    buffer.append(pos[2])
+
+
+                    # normals
+                    norm = self.model.normals[face[i][2] - 1]
+                    buffer.append(norm[0])
+                    buffer.append(norm[1])
+                    buffer.append(norm[2])
+
+                    # texCoords
+                    uvs = self.model.texcoords[face[i][1] - 1]
+                    buffer.append(uvs[0])
+                    buffer.append(uvs[1])
+                
+                for j in range(2):
+                    # positions
+                    pos = self.model.vertices[face[3-j][0] - 1]
+                    buffer.append(pos[0])
+                    buffer.append(pos[1])
+                    buffer.append(pos[2])
+
+
+                    # normals
+                    norm = self.model.normals[face[3-j][2] - 1]
+                    buffer.append(norm[0])
+                    buffer.append(norm[1])
+                    buffer.append(norm[2])
+
+                    # texCoords
+                    uvs = self.model.texcoords[face[3-j][1] - 1]
+                    buffer.append(uvs[0])
+                    buffer.append(uvs[1])
+
                 # positions
-                pos = self.model.vertices[face[i][0] - 1]
+                pos = self.model.vertices[face[0][0] - 1]
                 buffer.append(pos[0])
                 buffer.append(pos[1])
                 buffer.append(pos[2])
 
+
                 # normals
-                norm = self.model.normals[face[i][2] - 1]
+                norm = self.model.normals[face[0][2] - 1]
                 buffer.append(norm[0])
                 buffer.append(norm[1])
                 buffer.append(norm[2])
 
                 # texCoords
-                uvs = self.model.texcoords[face[i][1] - 1]
+                uvs = self.model.texcoords[face[0][1] - 1]
                 buffer.append(uvs[0])
                 buffer.append(uvs[1])
+                
+                
+
+                    
+
+
 
         self.vertBuffer = array(buffer, dtype = float32)
 
@@ -137,14 +206,19 @@ class Renderer(object):
         glViewport(0,0, self.width, self.height)
 
         self.scene = []
+        self.currentModelIndex = 0
 
         self.pointLight = glm.vec3(-4, 0, -1)
+        # self.pointLight = glm.vec3(0,0,-0.5)
 
         self.tiempo = 0
         self.valor = 0
 
         self.angle = 180
+        self.angleZ = -90
+        self.angleY = -90
         self.distanceRadius = 5
+        self.target = glm.vec3(0,0,-5)
 
         # View Matrix
         self.camPosition = glm.vec3(0,0,0)
@@ -160,7 +234,8 @@ class Renderer(object):
         
         
 
-    def rotateLeft(self, target, amount):
+    def rotateLeft(self, amount):
+        target = glm.vec3(0,0,-5)
         self.angle += amount
 
         self.camPosition.x = glm.sin(glm.radians(self.angle)) * self.distanceRadius
@@ -168,11 +243,46 @@ class Renderer(object):
 
         self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
     
-    def rotateRight(self, target, amount):
+    def rotateRight(self, amount):
+        target = glm.vec3(0,0,-5)
         self.angle -= amount
 
         self.camPosition.x = glm.sin(glm.radians(self.angle)) * self.distanceRadius
         self.camPosition.z = glm.cos(glm.radians(self.angle)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
+
+    def rotateUp(self, amount):
+        target = glm.vec3(0,0,-5)
+        self.angleY += amount
+
+        self.camPosition.y = glm.cos(glm.radians(self.angleY)) * self.distanceRadius
+        self.camPosition.z = glm.sin(glm.radians(self.angleY)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0.0, 1.0, 0.0))
+
+    def rotateDown(self, amount):
+        target = glm.vec3(0,0,-5)
+        self.angleY -= amount
+
+        self.camPosition.y = glm.cos(glm.radians(self.angleY)) * self.distanceRadius
+        self.camPosition.z = glm.sin(glm.radians(self.angleY)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0.0, 1.0, 0.0))
+    
+    def rotateFront(self, amount):
+        target = glm.vec3(0,0,-5)
+        self.angleZ -= amount
+
+        self.camPosition.z = glm.sin(glm.radians(self.angleZ)) * self.distanceRadius
+
+        self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
+    
+    def rotateBack(self, amount):
+        target = glm.vec3(0,0,-5)
+        self.angleZ += amount
+
+        self.camPosition.z = glm.sin(glm.radians(self.angleZ)) * self.distanceRadius
 
         self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
     
@@ -232,9 +342,8 @@ class Renderer(object):
                         self.pointLight.x, self.pointLight.y, self.pointLight.z)
 
 
-        for model in self.scene:
-            if self.active_shader:
-                glUniformMatrix4fv(glGetUniformLocation(self.active_shader, "modelMatrix"),
-                                   1, GL_FALSE, glm.value_ptr(model.getModelMatrix()))
-
-            model.renderInScene()
+        
+        if self.active_shader:
+            glUniformMatrix4fv(glGetUniformLocation(self.active_shader, "modelMatrix"),
+                               1, GL_FALSE, glm.value_ptr(self.scene[self.currentModelIndex].getModelMatrix()))
+        self.scene[self.currentModelIndex].renderInScene()
