@@ -270,17 +270,22 @@ class Renderer(object):
 
         self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0.0, 1.0, 0.0))
     
-    def rotateFront(self, amount):
+    def ZoomIn(self, amount):
         target = glm.vec3(0,0,-5)
-        self.angleZ -= amount
+        
 
+        if self.camPosition.z < -1.5:
+            self.angleZ -= amount
+            
         self.camPosition.z = glm.sin(glm.radians(self.angleZ)) * self.distanceRadius
 
         self.viewMatrix = glm.lookAt(target - self.camPosition, target, glm.vec3(0,1,0))
     
-    def rotateBack(self, amount):
+    def ZoomOut(self, amount):
         target = glm.vec3(0,0,-5)
-        self.angleZ += amount
+
+        if self.camPosition.z > -4.5:
+            self.angleZ += amount
 
         self.camPosition.z = glm.sin(glm.radians(self.angleZ)) * self.distanceRadius
 

@@ -74,10 +74,10 @@ while isRunning:
         rend.rotateRight(deltaTime * 20)
     if keys[K_w]:
         # rend.camPosition.z += 2 * deltaTime
-        rend.rotateFront(deltaTime * 20)
+        rend.ZoomIn(deltaTime * 20)
     if keys[K_s]:
         # rend.camPosition.z -= 2 * deltaTime
-        rend.rotateBack(deltaTime * 20)
+        rend.ZoomOut(deltaTime * 20)
     if keys[K_q]:
         # rend.camPosition.y -= 2 * deltaTime
         rend.rotateUp(deltaTime * 20)
@@ -92,6 +92,9 @@ while isRunning:
     if keys[K_RIGHT]:
         if rend.valor < 0.2:
             rend.valor += 0.1 * deltaTime
+    
+    
+
 
 
     for ev in pygame.event.get():
@@ -124,6 +127,34 @@ while isRunning:
             if ev.key == K_RETURN:
                 contador_fun()
                 rend.currentModelIndex = contador
+            if ev.key == K_SPACE:
+                pygame.mixer.music.load('./SoundTracks/Nine Lives.mp3')
+                pygame.mixer.music.play(-1)
+
+        if ev.type == pygame.MOUSEBUTTONDOWN:
+            if ev.button == 4:
+                rend.ZoomIn(4)
+            if ev.button == 5:
+                rend.ZoomOut(4)
+
+        if pygame.mouse.get_pressed()[0]:
+            mouse_movement = pygame.mouse.get_rel()
+
+            if mouse_movement[0] != 0:
+                if mouse_movement[0] > 0:
+                    target = rend.scene[0].position
+                    rend.rotateRight(3)
+                elif mouse_movement[0] < 0:
+                    target = rend.scene[0].position
+                    rend.rotateLeft(3)
+
+            if mouse_movement[1] != 0:
+                if mouse_movement[1] > 0:
+                    target = rend.scene[0].position
+                    rend.rotateDown(3)
+                elif mouse_movement[1] < 0:
+                    target = rend.scene[0].position
+                    rend.rotateUp(3)
                 
 
     rend.tiempo += deltaTime

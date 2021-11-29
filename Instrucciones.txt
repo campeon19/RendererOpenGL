@@ -1,0 +1,36 @@
+Movimiento:
+A D -> Rotacion horizontales
+W S -> Zoom
+Q E -> Rotacion Vertical
+
+Mouse:
+Rueda del mouse para hacer Zoom
+Dejar presionado click izquierdo para rotar en cualquier direccion
+
+Shaders:
+
+Para cambiar entre los diferentes shaders se deben presionar los numeros del 1-7
+1. Normal (se infla con las flechas)
+2. Toon shader
+3. Inversion de colores
+4. Shader que agrega lineas verticales al objeto
+5. Shader de luz de sirena de emergencia
+6. Shader que agrega lineas transparenes y deformaciones en x y z
+7. Movimiento de lineas verticales y horizontales
+
+Para cambiar entre el modo de WireframeMode y FillMode presionar los numeros 8-9
+8. WireframeMode
+9. FillMode
+
+Para cambiar entre los diferentes modelos cargados, presionar la tecla Enter
+
+Default: Cara
+2do Enter: Mario
+3er Enter: Luigi
+4to Enter: Yoshi
+5to Enter: Koopa
+6to Enter: Extra Life Mushroom
+7to Enter: Suzanne (Monkey Blender)
+8vo Enter: Reinicio (De regreso a la cara)
+
+
